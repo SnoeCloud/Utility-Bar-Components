@@ -1,0 +1,36 @@
+<!--
+ * Developed by Ben Logan, linkedin.com/in/ben-logan
+ -->
+ <aura:component controller="RelatedAssetsController">
+	<lightning:overlayLibrary aura:id="overlayLib"/>
+    <aura:attribute name="lstOfRecordType" type="String[]"/>
+    
+    <aura:attribute name="myAsset" type="Asset"/>
+    <aura:attribute name="myProductResult" type="scProductInfo"/>
+    <aura:attribute name="myOrderResult" type="scOrderInfo"/>
+    <aura:attribute name="myLineItemSN" type="String"/> 
+    <aura:attribute name="context" type="String"/> <!-- tells me which component I'm on -->
+    <aura:attribute name="caseId" type="String"/>
+    <aura:attribute name="newOrCase" type="Integer" default='0'/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.fetchListOfRecordTypes}"/>
+    
+    
+    <div class="slds-grid slds-wrap">
+        <div class="slds-size--1-of-2 slds-large-size--1-of-2">
+            <div class="slds-align--absolute-center">Select a Record Type</div>                            
+        </div>
+        <div class="slds-size--1-of-2 slds-large-size--1-of-2">
+            <ui:inputSelect aura:id="selectid">
+                <aura:iteration items="{!v.lstOfRecordType}" var="rtype">      
+                    <ui:inputSelectOption text="{!rtype}" label="{!rtype}"/>
+                </aura:iteration>
+            </ui:inputSelect>
+        </div>
+    </div>          
+    
+    <div align="right" style="margin-top: 15px;">
+        <lightning:button name="cancel" label="Cancel" onclick="{!c.handleCancel}"/>
+        <lightning:button name="ok" label="OK" variant="brand" onclick="{!c.handleOK}"/>
+    </div>
+</aura:component>

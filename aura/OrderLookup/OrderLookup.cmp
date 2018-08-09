@@ -1,0 +1,60 @@
+<!--
+ * Developed by Ben Logan, linkedin.com/in/ben-logan
+ -->
+ 
+ <aura:component controller="RelatedAssetsController" implements="force:lightningQuickAction,force:appHostable,lightning:actionOverride,force:hasRecordId,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,forceCommunity:availableForAllPageTypes">
+	<aura:dependency resource="markup://c:MakeCaseModal" />
+    <aura:attribute name="caseClient" type="Object"/>
+	<aura:attribute name="orderSearchResults" type="List"/>
+    <aura:attribute name="recordId" type="String"/>
+    <aura:attribute name="searchType" type="String"/>
+    <aura:attribute name="searchString" type="String"/>
+    <aura:attribute name="nullAddAllButton" type="Boolean" default="false"/> 
+    <aura:attribute name="lineItemsWithNullSNs" type="List"/>
+    <aura:attribute name="validSNs" type="List"/>  
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler name="change" value="{!v.recordId}" action="{!c.doInit}"/>
+
+    <lightning:overlayLibrary aura:id="overlayLib"/>
+    
+    <lightning:spinner class="slds-hide" variant="brand" aura:id="orderSpinner" />
+    <div class="orders-container">
+        <div class="slds-form slds-form_compound">
+            <div class="slds-form-element">
+                <div class="slds-form-element__row">
+                    <div class="slds-form-element slds-size_3-of-3">
+						<div class="field-label" style="margin-bottom: 10px;">
+                            <div>Search by:</div>
+                            <span>Order Number</span>
+                        </div>
+                        <ui:inputText placeholder="Search" class="slds-input" value="{!v.searchString}" aura:id="orderSearch" keypress="{!c.onHitEtter}" updateOn="keyup"/> 
+                    </div>
+                </div>
+                
+                <div class="slds-form-element__row">
+                    <div class="slds-form-element slds-size_1-of-1" align="center"> 
+                        <lightning:button class="slds-button slds-button_brand external-search-button" onclick="{! c.externalunitedOrderSearch }">Search</lightning:button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr/>
+        <div class="slds-media__body slds-m-top_x-small list-title" align="center">
+            <p class="slds-text-heading_small slds-m-right_small slds-align-middle slds-truncate">
+                Orders
+            </p>
+        </div>
+        
+        
+        <aura:if isTrue="{! v.orderSearchResults == null}">
+            <div>Sorry, no search results</div>
+        </aura:if>
+        <ul class="slds-accordion">
+            <aura:iteration items="{!v.orderSearchResults}" var="related">
+                <c:ProductSearchResult related="{!related}" caseClient="{!v.caseClient}" searchType="{!v.searchType}" recordId="{!v.recordId}" lineItemsWithNullSNs="{!v.lineItemsWithNullSNs}" validSNs="{!v.validSNs}"/>
+            </aura:iteration>
+        </ul>
+    </div>
+	
+</aura:component>

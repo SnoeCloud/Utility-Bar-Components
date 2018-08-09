@@ -1,0 +1,41 @@
+<!--
+ * Developed by Ben Logan, linkedin.com/in/ben-logan
+ -->
+<aura:component controller="RelatedAssetsController" implements="force:appHostable,lightning:actionOverride,force:hasRecordId,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,forceCommunity:availableForAllPageTypes">
+    <!-- Attribute declaration-->
+    <aura:attribute name="recordId" type="String"/>
+    <aura:attribute name="caseClient" type="Object"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler name="change" value="{!v.recordId}" action="{!c.doInit}"/>
+    <lightning:overlayLibrary aura:id="overlayLib"/>
+    
+    <div class="related-assets-container">
+        <div class="slds-grid slds-wrap">
+            <div class="slds-col slds-size_1-of-1">
+                <lightning:tabset >
+                    <lightning:tab label="Related" class="ltng-tab-custom" title="Assets owned by the Case's Contact">
+                        <aura:if isTrue="{! v.caseClient != null}">
+                            <c:InternalAssetTab recordId="{!v.recordId}" caseClient="{!v.caseClient}"/>
+                        
+                            <aura:set attribute="else">
+                                <div class="directions-container" align="center">
+                                    <div class="directions-content">
+                                        <div class="slds-text-heading_large directions-header">Open a case to see related assets.</div>
+                                        <div class="slds-text-heading_small ">All Registered and External searches are still available.</div>
+                                    </div>
+                                </div>
+                            </aura:set>
+                            
+                        </aura:if>
+                    </lightning:tab>
+                    <lightning:tab label="All Registered" class="ltng-tab-custom" title="All Assets in Salesforce">
+                        <c:AllAssetsTab recordId="{!v.recordId}" caseClient="{!v.caseClient}"/>
+                    </lightning:tab>
+                    <lightning:tab label="External" class="ltng-tab-custom" title="united Assets not in Salesforce">
+                        <c:ExternalAssetTab recordId="{!v.recordId}" caseClient="{!v.caseClient}"/>
+                    </lightning:tab>
+                </lightning:tabset>
+            </div>
+        </div>         
+    </div>
+</aura:component>

@@ -1,0 +1,52 @@
+<!--
+ * Developed by Ben Logan, linkedin.com/in/ben-logan
+-->
+
+<aura:component implements="force:hasRecordId">
+    <aura:attribute name="caseClientRelatedProduct" type="Object"/>
+    <aura:attribute name="caseClient" type="Object"/>
+    <aura:attribute name="recordId" type="String"/>
+
+    <li class="slds-accordion__list-item">
+        <section class="slds-accordion__section" aura:id="product-section">
+            <div class="slds-accordion__summary">
+                <h3 class="slds-text-heading_small slds-accordion__summary-heading slds-truncate">
+                    <button onclick="{!c.toggleExpand}" aria-controls="{! 'accordion-details-' + v.caseClientRelatedProduct.Id}" aria-expanded="true" class="slds-button slds-button_reset slds-accordion__summary-action">
+                        <lightning:icon iconName="utility:switch" size="x-small" alternativeText="Expand" class="slds-accordion__summary-action-icon slds-button__icon slds-button__icon_left"/>	
+                        <span class="slds-truncate" title="{!v.caseClientRelatedProduct.SerialNumber}">Serial #: {! v.caseClientRelatedProduct.SerialNumber}</span>
+                    </button>
+                </h3>
+                
+            </div>
+            <div aria-hidden="false" class="slds-accordion__content" id="{! 'accordion-details-' + v.caseClientRelatedProduct.Id}">
+                <div align="center">
+                    <c:AddToCaseButton myAsset='{!v.caseClientRelatedProduct}' caseId='{!v.recordId}' context='Internal'/>
+                </div>
+                <div class="slds-grid slds-gutters slds-wrap" style="margin-top: 15px">
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1 slds-large-size_1-of-2">
+                        <span class="field-label">Serial Number:</span>
+                        <div class="field-value">{!v.caseClientRelatedProduct.SerialNumber}&nbsp;</div>
+                        <span class="field-label">Model Number:</span> 
+                        <div class="field-value">{!v.caseClientRelatedProduct.ProductCode}&nbsp;</div>
+                        <span class="field-label">Last Ship Date:</span> 
+                        <div class="field-value">
+                            <lightning:formattedDateTime value="{!v.caseClientRelatedProduct.InstallDate}" year="numeric" month="numeric" day="numeric" />&nbsp;<br/> <!--*temp*-->
+                        </div>
+                        <span class="field-label">Registration Date:</span> 
+                        <div class="field-value">
+                            <lightning:formattedDateTime value="{!v.caseClientRelatedProduct.PurchaseDate}" year="numeric" month="numeric" day="numeric" />&nbsp;<br/> <!--*temp*--> 
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1 slds-large-size_1-of-2">
+                        <span class="field-label">Name:</span> 
+                        <div class="field-value">{!v.caseClientRelatedProduct.ProductCode}&nbsp;</div>
+                        <span class="field-label">Email:</span>
+                        <div class="field-value">{!v.caseClientRelatedProduct.Registration_Email__c}&nbsp;</div>
+                        <span class="field-label">Invoice Number:</span>
+                        <div class="field-value">{!v.caseClientRelatedProduct.Invoice_Number__c}&nbsp;</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </li>
+</aura:component>

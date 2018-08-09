@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AuraDefinitionBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>42.0</apiVersion>
+    <description>Each Line Item returned from a Product search result will be wrapped in an instance of this component.</description>
+</AuraDefinitionBundle>

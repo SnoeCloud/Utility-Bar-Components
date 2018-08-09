@@ -1,0 +1,175 @@
+<!--
+ * Developed by Ben Logan, linkedin.com/in/ben-logan
+ --> 
+    <aura:component controller="RelatedAssetsController" implements="force:hasRecordId">
+    <aura:attribute name="related" type="Object"/>
+    <aura:attribute name="caseClient" type="Object"/>
+    <aura:attribute name="searchType" type="String"/>
+    <aura:attribute name="recordId" type="String"/>
+    <aura:attribute name="nullAddAllButton" type="Boolean" default="false"/>
+    <aura:attribute name="lineItemsWithNullSNs" type="List"/>
+    <aura:attribute name="validSNs" type="List"/> 
+    
+    <!--<aura:handler name="change" value="{!v.lineItemsWithNullSNs}" action="{!c.doInit}"/>
+    <aura:handler name="change" value="{!v.validSNs}" action="{!c.doInit2}"/>-->
+
+    <li class="slds-accordion__list-item">
+        <section class="slds-accordion__section" aura:id="product-section">
+            <div class="slds-accordion__summary">
+                <h3 class="slds-text-heading_small slds-accordion__summary-heading slds-truncate">
+                    <button onclick="{!c.toggleExpand}" aria-controls="{! 'accordion-details-' + v.related.Id}" aria-expanded="true" class="slds-button slds-button_reset slds-accordion__summary-action">
+                        <lightning:icon iconName="utility:switch" size="x-small" alternativeText="Expand" class="slds-accordion__summary-action-icon slds-button__icon slds-button__icon_left"/>	
+                        <aura:if isTrue="{! v.searchType == 'Product'}">
+                            <span class="slds-truncate" title="{!v.related.SerialNumber}">Serial #: {! v.related.SerialNumber}</span>
+                        </aura:if>
+                        <aura:if isTrue="{! v.searchType == 'Order'}">  
+                            <span class="slds-truncate" title="{! v.related.unitedOrderNumber}">Order #: {! v.related.unitedOrderNumber}</span>
+                        </aura:if>
+                    </button>
+                </h3>
+            </div>
+            <div aria-hidden="false" class="slds-accordion__content" id="{! 'accordion-details-' + v.related.Id}">
+                <!-- Product Search Result -->
+                <aura:if isTrue="{! v.searchType == 'Product'}">
+                    <div align="center">
+                        <c:AddToCaseButton myProductResult='{!v.related}' caseId='{!v.recordId}' context='ProductResult'/>
+                    </div>
+                    <div class="slds-grid slds-gutters slds-wrap" style="margin-top: 15px">
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1 slds-large-size_1-of-2">
+                            <span class="field-label">Serial Number:</span>
+                            <div class="field-value">{!v.related.SerialNumber}&nbsp;</div>
+                            <span class="field-label">Model Number:</span> 
+                            <div class="field-value">{!v.related.ProductDetails.Code}&nbsp;</div>
+                            <span class="field-label">Last Order Number:</span>
+                            <div class="field-value">{!v.related.OrderDetails.OriginOrderNumber}&nbsp;</div>
+                            <span class="field-label">Last Ship Date:</span>
+                            <div class="field-value">
+                                <lightning:formattedDateTime value="{!v.related.DateDetails.ShippedOnUTC}" year="numeric" month="numeric" day="numeric" timezone="{!$Locale.timezone}" />&nbsp;
+                            </div>
+                            <span class="field-label">Registration Date:</span> 
+                            <div class="field-value">
+                                <lightning:formattedDateTime value="{!v.related.DateDetails.FirstRegisteredOnUTC}" year="numeric" month="numeric" day="numeric" timezone="{!$Locale.timezone}"/>&nbsp;
+                            </div>
+                            <span class="field-label">FirmwareVersion:</span> 
+                            <div class="field-value">{!v.related.FirmwareVersion}&nbsp;</div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1 slds-large-size_1-of-2">
+                            <span class="field-label">Name:</span> 
+                            <div class="field-value">{!v.related.ProductDetails.Description}&nbsp;</div>
+                            <span class="field-label">Email:</span> 
+                            <div class="field-value">{!v.related.RegistrationDetails.LastEmailAddress}&nbsp;</div>
+                            <span class="field-label">Invoice Number:</span> 
+                            <div class="field-value">{!v.related.OrderDetails.InvoiceNumber}&nbsp;</div>
+                            <span class="field-label">Manufactured Date:</span> 
+                            <div class="field-value">
+                                <lightning:formattedDateTime value="{!v.related.DateDetails.ManufacturedOnUTC}" year="numeric" month="numeric" day="numeric" timezone="{!$Locale.timezone}"/>&nbsp;
+                            </div>
+                            <span class="field-label">Purchased from united?</span>
+                            <div class="field-value">
+                                <aura:if isTrue="{!v.related.OrderDetails.PurchasedFromunited == 1}">
+	                                <ui:outputCheckbox value="true"/>&nbsp;
+                                    <aura:set attribute="else">
+                                        <ui:outputCheckbox value="false"/>&nbsp;
+                                    </aura:set>
+                                </aura:if>
+                            </div>
+                            <span class="field-label">Household ID:</span>
+                            <div class="field-value">{!v.related.RegistrationDetails.LastHouseholdId}&nbsp;</div>
+                        </div>
+                    </div>
+                    <hr/> <!-- Partner stuff is good -->
+                    <div class="slds-grid slds-gutters slds-wrap" style="margin-top: 0px">
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1 slds-large-size_1-of-2">
+                            <span class="field-label">Partner Name:</span> 
+                            <div class="field-value">{!v.related.ResellerDetails.DealerName}&nbsp;</div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1 slds-large-size_1-of-2">
+                            <span class="field-label">Partner Channel:</span> 
+                            <div class="field-value">{!v.related.ResellerDetails.DealerChannel}&nbsp;</div>
+                        </div>
+                    </div>
+                    <span class="field-label">Partner SubChannel:</span> 
+                    <div class="field-value">{!v.related.ResellerDetails.DealerSubChannel}&nbsp;</div>
+                    <hr/><!-- Product Bundle is good -->
+                    <div class="slds-grid slds-gutters slds-wrap" style="margin-top: 0px">
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1 slds-large-size_1-of-2">
+                            <span class="field-label">Product Bundle SN:</span> 
+                            <div class="field-value">{!v.related.ProductBundleDetails.SerialNumber}&nbsp;</div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1 slds-large-size_1-of-2">
+                            <span class="field-label">Product Bundle Code</span> 
+                            <div class="field-value">{!v.related.ProductBundleDetails.Code}&nbsp;</div>
+                        </div>
+                    </div>
+                    <span class="field-label">Product Bundle Description:</span> 
+                    <div class="field-value">{!v.related.ProductBundleDetails.Description}&nbsp;</div>
+                </aura:if>
+                
+                <!-- Order Search Results --> 
+                <aura:if isTrue="{! v.searchType == 'Order'}">  
+                    <div align="center">
+                        <aura:if isTrue="{!v.related.orderHasSerialNum == false}">
+                            <lightning:button variant="brand" disabled="true" label="Add All to Case"/>
+                            <aura:set attribute="else">
+                                <c:AddAllToCaseButton myOrderResult='{!v.related}' caseId='{!v.recordId}' nullChecks='{!v.nullChecks}' validSNs="{!v.validSNs}"/>
+                            </aura:set>
+                        </aura:if>
+                    </div>
+                    <div class="slds-grid slds-gutters slds-wrap" style="margin-top: 15px">
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1 slds-large-size_1-of-2">
+                            <span class="field-label">Order Number:</span> 
+                            <div class="field-value">{!v.related.OriginOrderNumber}&nbsp;</div>
+                            <span class="field-label">united Order Number:</span> 
+                            <div class="field-value">{!v.related.unitedOrderNumber}&nbsp;</div>
+                            <span class="field-label">Parent united Order Number:</span> 
+                            <div class="field-value">{!v.related.ParentunitedOrderNumber}&nbsp;</div>
+                            <span class="field-label">Subtotal:</span> 
+                            <div class="field-value">
+                                <lightning:formattedNumber value="{!v.related.Subtotal}" style="currency" currencyCode="{!v.related.Currency1}" />&nbsp;
+                            </div>
+                            <span class="field-label">Tax Total:</span> 
+                            <div class="field-value">
+                                <lightning:formattedNumber value="{!v.related.TaxTotal}" style="currency" currencyCode="{!v.related.Currency1}" />&nbsp;
+                            </div>
+                            <span class="field-label">Currency:</span> 
+                            <div class="field-value">{!v.related.Currency1}&nbsp;</div>
+                            <span class="field-label">Coupon:</span> 
+                            <div class="field-value">{!v.related.Coupon}&nbsp;</div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1 slds-large-size_1-of-2">
+                            <span class="field-label">Origin:</span> 
+                            <div class="field-value">{!v.related.OriginName}&nbsp;</div>
+                            <span class="field-label">Email:</span> 
+                            <div class="field-value">{!v.related.EmailAddress}&nbsp;</div>
+                            <span class="field-label">Shipping Cost:</span> 
+                            <div class="field-value">
+                                <lightning:formattedNumber value="{!v.related.ShippingCost}" style="currency" currencyCode="{!v.related.Currency1}" />&nbsp;
+                            </div>
+                            <span class="field-label">Total:</span> 
+                            <div class="field-value">
+                                <lightning:formattedNumber value="{!v.related.Total}" style="currency" currencyCode="{!v.related.Currency1}" />&nbsp;
+                            </div>
+                            <span class="field-label">Order Date:</span> 
+                            <div class="field-value">
+                                <lightning:formattedDateTime value="{!v.related.OrderDateUTC}" year="numeric" month="numeric" day="numeric" hour="2-digit" minute="2-digit" timezone="{!$Locale.timezone}" />&nbsp;
+                            </div>
+                            <span class="field-label">Shipment Date:</span> 
+                            <div class="field-value">
+                                <lightning:formattedDateTime value="{!v.related.ShipmentDateUTC}" year="numeric" month="numeric" day="numeric" hour="2-digit" minute="2-digit" timezone="{!$Locale.timezone}" />&nbsp;
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Line Items -->
+                    <!--jk 3/13/19 I-315660  <span class="field-label">LineItems</span> -->
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-col slds-size_1-of-1">
+                            <aura:iteration items="{!v.related.LineItems.LineItem}" var="LineItem">
+                                <c:LineItem LineItem="{!LineItem}" myOrderResult='{!v.related}' CurrencyCode="{!v.related.Currency1}" recordId='{!v.recordId}' orderHasParentBOM="{!v.related.orderHasParentBOM}"/>
+                            </aura:iteration>
+                        </div>
+                    </div>
+                </aura:if>
+            </div>
+        </section>
+    </li>
+</aura:component>

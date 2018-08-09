@@ -1,0 +1,20 @@
+<!--
+ * Developed by Ben Logan, linkedin.com/in/ben-logan
+ -->
+ 
+ <aura:component controller="RelatedAssetsController">
+	<aura:attribute name="myAsset" type="Asset"/>
+    <aura:attribute name="myProductResult" type="scProductInfo"/>
+    <aura:attribute name="myOrderResult" type="scOrderInfo"/>
+    <aura:attribute name="myLineItemSN" type="String"/>
+    <aura:attribute name="context" type="String"/> <!-- tells me which component I'm on -->
+    <aura:attribute name="caseId" type="String"/>
+    <aura:attribute name="newOrCase" type="Integer" default='0'/>   
+    <lightning:overlayLibrary aura:id="overlayLib"/>
+    
+    <aura:handler name="change" value="{!v.newOrCase}" action="{!c.handleShowModal}"/>
+
+ 
+    <lightning:spinner class="slds-hide" variant="brand" aura:id="mySpinner" />
+    <lightning:button class="slds-button slds-button_brand" onclick="{!c.checkCaseAssetExistence}">Add to Case</lightning:button>
+</aura:component>

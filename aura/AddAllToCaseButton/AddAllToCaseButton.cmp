@@ -1,0 +1,16 @@
+<!--
+ * Developed by Ben Logan, linkedin.com/in/ben-logan
+ -->
+ <aura:component controller="RelatedAssetsController">
+	<aura:attribute name="myOrderResult" type="scOrderInfo"/>
+    <aura:attribute name="caseId" type="String"/> 
+    <aura:attribute name="checkCount" type="Integer" default='0'/>  
+    <aura:attribute name="nullChecks" type="String"/>
+    <aura:attribute name="validSNs" type="List"/>
+    
+    <aura:handler name="change" value="{!v.checkCount}" action="{!c.createCaseAssets}"/>
+
+    <lightning:spinner class="slds-hide" variant="brand" aura:id="mySpinner" />
+    <!--TEST: {!v.validSNs}<br/>-->
+    <lightning:button class="slds-button slds-button_brand" onclick="{!c.checkCaseAssetsExistence}">Add All to Case</lightning:button>
+</aura:component>

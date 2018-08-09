@@ -1,0 +1,63 @@
+<!--
+ * Developed by Ben Logan, linkedin.com/in/ben-logan
+ -->
+ 
+ <aura:component controller="RelatedAssetsController" implements="force:hasRecordId">
+    <!-- Attribute declaration-->
+    <aura:dependency resource="markup://c:AddToCaseButton" />
+    <aura:attribute name="searchResults" type="List"/>
+    <aura:attribute name="searchString" type="String"/>
+    <aura:attribute name="recordId" type="String"/>
+    <aura:attribute name="caseClient" type="Object"/>
+    <aura:attribute name="caseClientRelatedProducts" type="List"/>
+    <aura:handler name="change" value="{!v.recordId}" action="{!c.doInit}"/> <!-- for utility bar component -->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/> <!-- for on-page component -->
+    <aura:handler name="change" value="{!v.caseClient}" action="{!c.populateClientRelatedProducts}"/>
+    <lightning:overlayLibrary aura:id="overlayLib"/>
+    
+    <lightning:spinner class="slds-hide" variant="brand" aura:id="internalTabSpinner" />
+    <div class="slds-form slds-form_compound">
+        <div class="slds-form-element">
+            <div class="slds-form-element__row">
+                <div class="slds-form-element slds-size_3-of-3">            
+                    <!--<label class="slds-form-element__label" for="assetSearch">Search</label> -->
+                    <ui:inputText placeholder="Search" class="slds-input" value="{!v.searchString}" aura:id="assetSearch" keypress="{!c.onHitEtter}" updateOn="keyup"/> 
+                </div>
+            </div>
+            
+            <div class="slds-form-element__row">
+                <!-- Available filters-->
+                <div class="slds-form-element slds-size_3-of-5"> 
+                    <!--<label class="slds-form-element__label">Search Filter</label>-->
+                    <ui:inputSelect class="slds-select" aura:id="searchFilter">
+                        <ui:inputselectoption label="Serial Number" text="Serial Number" value="false"/>
+                        <ui:inputselectoption label="Last Order Number" text="Last Order Number" value="false"/> 
+                    </ui:inputSelect>
+                </div>
+                <div class="slds-form-element slds-size_2-of-5" align="center"> 
+                    <lightning:button class="slds-button slds-button_brand external-search-button" onclick="{! c.internalSearch }">Search</lightning:button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <hr/>
+    
+    <div class="slds-media__body slds-m-top_x-small list-title" align="center">
+        <p class="slds-text-heading_small slds-m-right_small slds-truncate">
+            Assets
+        </p>
+    </div>
+    <aura:if isTrue="{! v.caseClientRelatedProducts == null}">
+        <div>Sorry, no search results</div>
+    </aura:if>
+    <div class="slds-grid slds-wrap">
+        <div class="slds-col slds-size_1-of-1">
+            <ul class="slds-accordion">
+                <aura:iteration items="{!v.caseClientRelatedProducts}" var="related">
+                    <c:AssetSearchResult caseClientRelatedProduct="{!related}" caseClient="{!v.caseClient}" recordId="{!v.recordId}"/>
+                </aura:iteration>
+            </ul>
+        </div>
+    </div>
+</aura:component>

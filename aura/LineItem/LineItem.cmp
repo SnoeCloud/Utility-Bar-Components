@@ -1,0 +1,117 @@
+<!--
+ * Developed by Ben Logan, linkedin.com/in/ben-logan
+ -->
+ 
+ <aura:component >
+    <aura:attribute name="myOrderResult" type="scOrderInfo"/>
+    <aura:attribute name="LineItem" type="Object"/>
+    <aura:attribute name="CurrencyCode" type="String"/>
+    <aura:attribute name="recordId" type="String"/>
+    <aura:attribute name="orderHasParentBOM" type="Boolean"/>
+    
+    <li class="slds-accordion__list-item">
+        <section class="slds-accordion__section" aura:id="line-item-section">
+            <div class="slds-accordion__summary">
+                <h3 class="slds-text-heading_small slds-accordion__summary-heading slds-truncate">
+                    <button onclick="{!c.toggleExpand}" aria-controls="{! 'accordion-details-' + v.LineItem.Id}" aria-expanded="true" class="slds-button slds-button_reset slds-accordion__summary-action">
+                        <lightning:icon iconName="utility:switch" size="x-small" alternativeText="Expand" class="slds-accordion__summary-action-icon slds-button__icon slds-button__icon_left"/>	
+                        <span class="slds-truncate" title="{# v.LineItem.ProductNumber}">{! v.LineItem.ProductNumber}</span> 
+                    </button>
+                </h3>
+            </div>
+            <div aria-hidden="false" class="slds-accordion__content" id="{! 'accordion-details-' + v.LineItem.Id}">
+                <div class="slds-grid slds-gutters slds-wrap" style="margin-top: 15px">
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1 slds-large-size_1-of-2">
+                        <span class="field-label">Name:</span> 
+                        <div class="field-value">{#v.LineItem.ProductDescription} &nbsp;</div>
+                        <span class="field-label">Price:</span> 
+                        <div class="field-value">
+                            <lightning:formattedNumber value="{#v.LineItem.Price}" style="currency" currencyCode="{#v.CurrencyCode}" />&nbsp;
+                        </div>
+                        <span class="field-label">Discount:</span> 
+                        <div class="field-value">
+                            <lightning:formattedNumber value="{#v.LineItem.Discount}" style="currency" currencyCode="{#v.CurrencyCode}" />&nbsp;
+                        </div>
+                        <span class="field-label">Tax:</span> 
+                        <div class="field-value">
+                            <lightning:formattedNumber value="{#v.LineItem.Tax}" style="currency" currencyCode="{#v.CurrencyCode}" />&nbsp;
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1 slds-large-size_1-of-2">
+                        <span class="field-label">Model Number:</span> 
+                        <div class="field-value">{#v.LineItem.ProductNumber}&nbsp;</div>
+                        <span class="field-label">Quantity:</span> 
+                        <div class="field-value">{#v.LineItem.Quantity}&nbsp;</div>
+                        <span class="field-label">Quantity Shipped:</span> 
+                        <div class="field-value">{#v.LineItem.QuantityShipped}&nbsp;</div>
+                    </div>
+                </div>
+                <!-- Parent BOM -->
+                <aura:if isTrue="{# v.LineItem.ParentBOM != null}">
+                    <span class="field-label">Parent BOM</span><hr style="display: inline-block; width: 60%; margin-bottom: 4px"/>
+                    <div class="slds-grid slds-gutters slds-wrap" style="margin-top: 15px">
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1 slds-large-size_1-of-2">
+                            <span class="field-label">Id:</span> 
+                            <div class="field-value">{#v.LineItem.ParentBOM.Id}&nbsp;</div>
+                            <span class="field-label">Product Number:</span> 
+                            <div class="field-value">{#v.LineItem.ParentBOM.ProductNumber}&nbsp;</div>
+                            <span class="field-label">Quantity:</span> 
+                            <div class="field-value">{#v.LineItem.ParentBOM.Quantity}&nbsp;</div>
+                            <span class="field-label">Quantity Shipped:</span> 
+                            <div class="field-value">{#v.LineItem.ParentBOM.QuantityShipped}&nbsp;</div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1 slds-large-size_1-of-2">
+                            <span class="field-label">Description:</span> 
+                            <div class="field-value">{#v.LineItem.ParentBOM.Description}&nbsp;</div>
+                            <span class="field-label">Price:</span> 
+                            <div class="field-value">
+                                <lightning:formattedNumber value="{#v.LineItem.ParentBOM.Price}" style="currency" currencyCode="{#v.LineItem.Currency1}" />&nbsp;
+                            </div>
+                            <span class="field-label">Discount:</span> 
+                            <div class="field-value">
+                                <lightning:formattedNumber value="{#v.LineItem.ParentBOM.Discount}" style="currency" currencyCode="{#v.LineItem.Currency1}" />&nbsp;
+                            </div>
+                            <span class="field-label">Tax:</span> 
+                            <div class="field-value">
+                                <lightning:formattedNumber value="{#v.LineItem.ParentBOM.Tax}" style="currency" currencyCode="{#v.LineItem.Currency1}" />&nbsp;
+                            </div>
+                        </div>
+                    </div>
+                </aura:if>
+
+                <aura:if isTrue="{! v.LineItem.Quantity >= 100}">
+                    <div class="field-value" align="center">
+                        Bulk order detected.
+                    </div>
+                    <aura:set attribute="else">
+                        <div class="field-value"> <!-- SHOW FIELD LABEL IF NULL -->
+                            <aura:if isTrue="{! v.LineItem.SerialNumbers == null}">
+                                <div class="slds-grid slds-gutters slds-wrap" style="margin-top: 15px">
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1 slds-large-size_1-of-2">
+                                        <span class="field-label">Serial Number:</span> 
+                                        <div class="field-value">&nbsp;</div>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1 slds-large-size_1-of-2">
+                                        <lightning:button variant="brand" disabled="true" label="Add to Case"/>
+                                    </div>
+                                </div>
+                            </aura:if>
+                            <aura:iteration items="{#v.LineItem.SerialNumbers.SerialNumber}" var="SerialNumber">
+                                <div class="slds-grid slds-gutters slds-wrap" style="margin-top: 15px">
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1 slds-large-size_1-of-2">
+                                        <span class="field-label">Serial Number:</span> 
+                                        <div class="field-value">{!SerialNumber}&nbsp;</div>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-1 slds-large-size_1-of-2">
+                                        <!--<button>Add to Case</button>-->
+                                        <c:AddToCaseButton myLineItemSN='{!SerialNumber}' myOrderResult='{#v.myOrderResult}' caseId='{#v.recordId}' context='Order'/>
+                                    </div>
+                                </div>
+                            </aura:iteration>
+                        </div>
+                    </aura:set>
+                </aura:if>
+            </div>
+        </section>
+    </li>
+</aura:component>
